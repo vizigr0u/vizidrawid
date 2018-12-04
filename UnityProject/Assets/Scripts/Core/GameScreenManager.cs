@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -126,6 +126,8 @@ public class GameScreenManager : MonoBehaviour {
     private void Log(string message)
     {
         if (s_AllowLog)
+        {
             Debug.Log("GameScreenManager: " + message);
+        }
     }
 }
