@@ -1,2 +1,2 @@
 # vizidrawid
-simple drawing game for mobile
+simple drawing game for mobile made with Unity
