@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using UnityEngine;
 
+// Implementation of easing functions found on https://easings.net/fr
 public class Easing
 {
     public enum Style
