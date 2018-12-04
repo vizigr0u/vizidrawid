@@ -1,8 +1,8 @@
 - Title/Setup Screen
-NAME
-Number players ? scroll (NUM_PLAYERS)
-Show Timer ? Yes/No Yes -> scroll (TIMER)
-Start!
+    NAME
+    Number players ? scroll (NUM_PLAYERS)
+    Show Timer ? Yes/No Yes -> scroll (TIMER)
+    Start!
 - Typing Screen
     if Turn == 1
         title Word/phrase/expression
