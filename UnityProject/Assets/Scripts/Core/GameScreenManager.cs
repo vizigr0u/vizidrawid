@@ -20,6 +20,12 @@ public class GameScreenManager : MonoBehaviour {
     public GameObject CurrentPanel;
     public GameObject NextPanel;
 
+    Vector2 PanelDefaultSize => Vector2.one;
+    Vector2 CurrentPanelDefaultPos => Vector2.zero;
+
+    Vector2 PreviousPanelDefaultPos => CurrentPanelDefaultPos - Vector2.left;
+    Vector2 NextPanelDefaultPos => CurrentPanelDefaultPos + Vector2.right;
+
     Dictionary<GameObject, RectTransform> PanelRects;
 
     Transform CurrentlyLoadedPrefab;
@@ -77,24 +83,16 @@ public class GameScreenManager : MonoBehaviour {
         GameObject previousPrefab = CurrentlyLoadedPrefab.gameObject;
         CurrentlyLoadedPrefab = LoadScreen(screen, NextPanel);
 
-        Vector2 originalCurrentPanelMin = PanelRects[CurrentPanel].anchorMin;
-        Vector2 originalCurrentPanelMax = PanelRects[CurrentPanel].anchorMax;
-        Vector2 originalNextPanelMin = PanelRects[NextPanel].anchorMin;
-        Vector2 originalNextPanelMax = PanelRects[NextPanel].anchorMax;
-
         // move Previous panel to the far right to become Next
-        PanelRects[PreviousPanel].anchorMin = new Vector2(1, 0);
-        PanelRects[PreviousPanel].anchorMax = new Vector2(2, 1);
+        SetPanelPosByAnchors(PanelRects[PreviousPanel], NextPanelDefaultPos);
 
         Func<float, float> easing = Easing.GetEasing(transitionEasing);
 
         (this).Transition(0, 1, transitionTime, (float t) =>
         {
             Vector2 offset = easing(t) * Vector2.left;
-            PanelRects[CurrentPanel].anchorMin = originalCurrentPanelMin + offset;
-            PanelRects[CurrentPanel].anchorMax = originalCurrentPanelMax + offset;
-            PanelRects[NextPanel].anchorMin = originalNextPanelMin + offset;
-            PanelRects[NextPanel].anchorMax = originalNextPanelMax + offset;
+            SetPanelPosByAnchors(PanelRects[CurrentPanel], CurrentPanelDefaultPos + offset);
+            SetPanelPosByAnchors(PanelRects[NextPanel], NextPanelDefaultPos + offset);
         }, onComplete: () => {
             // Unload old prefab
             Destroy(previousPrefab);
@@ -110,6 +108,12 @@ public class GameScreenManager : MonoBehaviour {
             CurrentPanel.name = "Current";
             NextPanel.name = "Next";
         });
+    }
+
+    void SetPanelPosByAnchors(RectTransform panel, Vector2 newPos)
+    {
+        panel.anchorMin = newPos;
+        panel.anchorMax = newPos + PanelDefaultSize;
     }
 
     private Transform LoadScreen(ScreenType screen, GameObject parent)
