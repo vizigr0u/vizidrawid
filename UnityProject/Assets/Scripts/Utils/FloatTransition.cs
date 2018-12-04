@@ -17,8 +17,8 @@ public static class FloatTransitions
             onUpdate(Mathf.SmoothStep(from, to, 1.0f - alpha));
         }
 
-        onComplete?.Invoke();
         onUpdate(to);
+        onComplete?.Invoke();
     }
 
     public static void Transition(this MonoBehaviour monoBehaviour, float from, float to, float overTime, Action<float> onUpdate, Action onComplete = null)
