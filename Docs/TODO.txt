@@ -1,0 +1,43 @@
+Critical:
+    App Name
+    Title Screen
+        Name input
+        Num Players
+    Main Game
+        Peek
+        Cancel
+        Check / Next Player
+        Current Turn indicator
+        Drawing Screen
+        Typing Screen
+            title Word/phrase/expression
+            Your guess
+    Slide Mode
+        Start Slides
+        Slide between images and words
+
+Improvments:
+    Num Players slider
+    Pen size slider
+    Drawing Screen:
+        Timer
+        Erase/Pen -> toggle
+        Eraser/Pen size -> memorize one size for each?
+    Game Over:
+        Scroll back super fast
+
+Assets:
+    Pen icon
+    Eraser icon
+    Brush size icon
+    Brush size slider
+    Peek icon
+    App icon
+    Done/Next button icon
+
+Extras:
+    Localization
+    Word suggestions
+    Options
+    Music
+    Sound

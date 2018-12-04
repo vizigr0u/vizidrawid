@@ -1,0 +1,38 @@
+- Title/Setup Screen
+NAME
+Number players ? scroll (NUM_PLAYERS)
+Show Timer ? Yes/No Yes -> scroll (TIMER)
+Start!
+- Typing Screen
+    if Turn == 1
+        title Word/phrase/expression
+        > Dice button "get suggestions"
+    else
+        DISABLED UNTIL PEEK
+        Guess
+        > Peek -> Peek previous drawing
+        if enabled:
+            > Check / Next Player  -> check input -> NEXT
+    Input (works in enabled)
+- Drawing Screen
+    DISABLED UNTIL PEEK
+    Drawing Area (works if enabled)
+    > Peek -> Peek at previous word - Peek Exit = Enable Drawing + Start Timer
+    if enabled:
+        > Erase/Pen -> toggle
+        > Pen(or eraser) size -> memorize one size for each?
+        > Check / Next Player -> NEXT
+NEXT:
+    > Cancel button for 5 sec
+    Turn++
+    if Turn == NUM_PLAYERS:
+        Game Over, load everything, scroll back to first super fast
+        > Reveal Word -> enter slide mode
+- Slide Mode
+    (NAME) wrote:
+        (WORD)
+    > (slide right to next Drawing / Text)
+    > Start over -> Title Menu ready to play, to allow changing settings if needed
+
+UI to always display:
+    Current Turn
