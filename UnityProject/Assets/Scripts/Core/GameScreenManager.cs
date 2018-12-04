@@ -20,6 +20,15 @@ public class GameScreenManager : MonoBehaviour {
     public GameObject CurrentPanel;
     public GameObject NextPanel;
 
+    public Transform HomeScreenPrefab;
+    public Transform GameScreenPrefab;
+    public Transform EndScreenPrefab;
+
+    public enum ScreenType
+    {
+        Home, Game, End
+    };
+
     Vector2 PanelDefaultSize => Vector2.one;
     Vector2 CurrentPanelDefaultPos => Vector2.zero;
 
@@ -29,15 +38,6 @@ public class GameScreenManager : MonoBehaviour {
     Dictionary<GameObject, RectTransform> PanelRects;
 
     Transform CurrentlyLoadedPrefab;
-
-    public Transform HomeScreenPrefab;
-    public Transform GameScreenPrefab;
-    public Transform EndScreenPrefab;
-
-    public enum ScreenType
-    {
-        Home, Game, End
-    };
 
     public Transform GetScreenPrefab(ScreenType screen)
     {
