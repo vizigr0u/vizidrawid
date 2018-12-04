@@ -10,19 +10,19 @@ public class GameScreenManager : MonoBehaviour {
 
     public static GameScreenManager Instance { get; private set; }
 
-    public ScreenType ScreenToLoad = ScreenType.Home;
+    public ScreenType firstScreenToLoad = ScreenType.Home;
 
     public float transitionTime = 2f;
 
     public Easing.Style transitionEasing = Easing.Style.InOutSine;
 
-    public GameObject PreviousPanel;
-    public GameObject CurrentPanel;
-    public GameObject NextPanel;
+    public GameObject previousPanel;
+    public GameObject currentPanel;
+    public GameObject nextPanel;
 
-    public Transform HomeScreenPrefab;
-    public Transform GameScreenPrefab;
-    public Transform EndScreenPrefab;
+    public Transform homeScreenPrefab;
+    public Transform gameScreenPrefab;
+    public Transform endScreenPrefab;
 
     public enum ScreenType
     {
@@ -35,20 +35,20 @@ public class GameScreenManager : MonoBehaviour {
     Vector2 PreviousPanelDefaultPos => CurrentPanelDefaultPos - Vector2.left;
     Vector2 NextPanelDefaultPos => CurrentPanelDefaultPos + Vector2.right;
 
-    Dictionary<GameObject, RectTransform> PanelRects;
+    Dictionary<GameObject, RectTransform> m_PanelRects;
 
-    Transform CurrentlyLoadedPrefab;
+    Transform m_CurrentlyLoadedPrefab;
 
     public Transform GetScreenPrefab(ScreenType screen)
     {
         switch (screen)
         {
             case ScreenType.Home:
-                return HomeScreenPrefab;
+                return homeScreenPrefab;
             case ScreenType.Game:
-                return GameScreenPrefab;
+                return gameScreenPrefab;
             case ScreenType.End:
-                return EndScreenPrefab;
+                return endScreenPrefab;
             default:
                 Debug.LogError($"Unhandled screentype {screen}");
                 return null;
@@ -61,11 +61,11 @@ public class GameScreenManager : MonoBehaviour {
 
         Instance = this;
 
-        List<GameObject> PanelsObjects = new List<GameObject> { PreviousPanel, CurrentPanel, NextPanel };
+        List<GameObject> panelsObjects = new List<GameObject> { previousPanel, currentPanel, nextPanel };
 
-        Assert.IsFalse(PanelsObjects.Any(o => o == null), $"One of the Panels wasn't properly assigned");
+        Assert.IsFalse(panelsObjects.Any(o => o == null), $"One of the Panels wasn't properly assigned");
 
-        PanelRects = PanelsObjects.ToDictionary(o => o, o => o.GetComponent<RectTransform>());
+        m_PanelRects = panelsObjects.ToDictionary(o => o, o => o.GetComponent<RectTransform>());
 
         foreach (ScreenType screen in Enum.GetValues(typeof(ScreenType)))
         {
@@ -73,40 +73,40 @@ public class GameScreenManager : MonoBehaviour {
             Assert.IsNotNull(prefab, $"Please specify a {screen} screen prefab");
         }
 
-        CurrentlyLoadedPrefab = LoadScreen(ScreenToLoad, CurrentPanel);
+        m_CurrentlyLoadedPrefab = LoadScreen(firstScreenToLoad, currentPanel);
     }
 
     public void LoadNextScreen(ScreenType screen)
     {
         Log($"Loading screen {screen}");
 
-        GameObject previousPrefab = CurrentlyLoadedPrefab.gameObject;
-        CurrentlyLoadedPrefab = LoadScreen(screen, NextPanel);
+        GameObject previousPrefab = m_CurrentlyLoadedPrefab.gameObject;
+        m_CurrentlyLoadedPrefab = LoadScreen(screen, nextPanel);
 
         // move Previous panel to the far right to become Next
-        SetPanelPosByAnchors(PanelRects[PreviousPanel], NextPanelDefaultPos);
+        SetPanelPosByAnchors(m_PanelRects[previousPanel], NextPanelDefaultPos);
 
         Func<float, float> easing = Easing.GetEasing(transitionEasing);
 
         (this).Transition(0, 1, transitionTime, (float t) =>
         {
             Vector2 offset = easing(t) * Vector2.left;
-            SetPanelPosByAnchors(PanelRects[CurrentPanel], CurrentPanelDefaultPos + offset);
-            SetPanelPosByAnchors(PanelRects[NextPanel], NextPanelDefaultPos + offset);
+            SetPanelPosByAnchors(m_PanelRects[currentPanel], CurrentPanelDefaultPos + offset);
+            SetPanelPosByAnchors(m_PanelRects[nextPanel], NextPanelDefaultPos + offset);
         }, onComplete: () => {
             // Unload old prefab
             Destroy(previousPrefab);
 
             // Swap games objects to their proper purpose
-            GameObject savedPreviousPanel = PreviousPanel;
-            PreviousPanel = CurrentPanel;
-            CurrentPanel = NextPanel;
-            NextPanel = savedPreviousPanel;
+            GameObject savedPreviousPanel = previousPanel;
+            previousPanel = currentPanel;
+            currentPanel = nextPanel;
+            nextPanel = savedPreviousPanel;
 
             // Update names to reflect their purpose
-            PreviousPanel.name = "Previous";
-            CurrentPanel.name = "Current";
-            NextPanel.name = "Next";
+            previousPanel.name = "Previous";
+            currentPanel.name = "Current";
+            nextPanel.name = "Next";
         });
     }
 
