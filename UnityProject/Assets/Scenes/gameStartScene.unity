@@ -492,9 +492,9 @@ MonoBehaviour:
   ScreenToLoad: 0
   transitionTime: 1
   transitionEasing: 9
-  Previous: {fileID: 1890600319}
-  Current: {fileID: 1037406736}
-  Next: {fileID: 816184122}
+  PreviousPanel: {fileID: 1890600319}
+  CurrentPanel: {fileID: 1037406736}
+  NextPanel: {fileID: 816184122}
   HomeScreenPrefab: {fileID: 224224097379646482, guid: f4b850c4cf377614bb156d607effd235,
     type: 2}
   GameScreenPrefab: {fileID: 224341911099958622, guid: dff0649dcb2633b4ca206e8e5295df17,

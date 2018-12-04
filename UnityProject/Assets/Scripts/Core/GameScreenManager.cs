@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -15,9 +16,9 @@ public class GameScreenManager : MonoBehaviour {
 
     public Easing.Style transitionEasing = Easing.Style.InOutSine;
 
-    public GameObject Previous;
-    public GameObject Current;
-    public GameObject Next;
+    public GameObject PreviousPanel;
+    public GameObject CurrentPanel;
+    public GameObject NextPanel;
 
     Dictionary<GameObject, RectTransform> PanelRects;
 
@@ -54,16 +55,11 @@ public class GameScreenManager : MonoBehaviour {
 
         Instance = this;
 
-        List<GameObject> panelsGameObjects = new List<GameObject> { Previous, Current, Next };
+        List<GameObject> PanelsObjects = new List<GameObject> { PreviousPanel, CurrentPanel, NextPanel };
 
-        int numPanels = panelsGameObjects.Count;
-        PanelRects = new Dictionary<GameObject, RectTransform>(numPanels);
+        Assert.IsFalse(PanelsObjects.Any(o => o == null), $"One of the Panels wasn't properly assigned");
 
-        foreach (GameObject panelGO in panelsGameObjects)
-        {
-            Assert.IsNotNull(panelGO, $"Missing one of the {numPanels} panels gameobjects");
-            PanelRects[panelGO] = panelGO.GetComponent<RectTransform>();
-        }
+        PanelRects = PanelsObjects.ToDictionary(o => o, o => o.GetComponent<RectTransform>());
 
         foreach (ScreenType screen in Enum.GetValues(typeof(ScreenType)))
         {
@@ -71,7 +67,7 @@ public class GameScreenManager : MonoBehaviour {
             Assert.IsNotNull(prefab, $"Please specify a {screen} screen prefab");
         }
 
-        CurrentlyLoadedPrefab = LoadScreen(ScreenToLoad, Current);
+        CurrentlyLoadedPrefab = LoadScreen(ScreenToLoad, CurrentPanel);
     }
 
     public void LoadNextScreen(ScreenType screen)
@@ -79,32 +75,40 @@ public class GameScreenManager : MonoBehaviour {
         Log($"Loading screen {screen}");
 
         GameObject previousPrefab = CurrentlyLoadedPrefab.gameObject;
-        CurrentlyLoadedPrefab = LoadScreen(screen, Next);
+        CurrentlyLoadedPrefab = LoadScreen(screen, NextPanel);
 
-        // move Previous panel to the far right to be used as Next
-        PanelRects[Previous].anchoredPosition = PanelRects[Next].anchoredPosition; // TODO: DOESN'T WORK?
+        Vector2 originalCurrentPanelMin = PanelRects[CurrentPanel].anchorMin;
+        Vector2 originalCurrentPanelMax = PanelRects[CurrentPanel].anchorMax;
+        Vector2 originalNextPanelMin = PanelRects[NextPanel].anchorMin;
+        Vector2 originalNextPanelMax = PanelRects[NextPanel].anchorMax;
 
-        Vector2 originalCurrentPanelPos = PanelRects[Current].anchoredPosition;
-        Vector2 originalNextPanelPos = PanelRects[Next].anchoredPosition;
+        // move Previous panel to the far right to become Next
+        PanelRects[PreviousPanel].anchorMin = new Vector2(1, 0);
+        PanelRects[PreviousPanel].anchorMax = new Vector2(2, 1);
+
         Func<float, float> easing = Easing.GetEasing(transitionEasing);
 
         (this).Transition(0, 1, transitionTime, (float t) =>
         {
-            Vector2 offset = easing(t) * -Screen.width * Vector2.right;
-            PanelRects[Current].anchoredPosition = originalCurrentPanelPos + offset;
-            PanelRects[Next].anchoredPosition = originalNextPanelPos + offset;
+            Vector2 offset = easing(t) * Vector2.left;
+            PanelRects[CurrentPanel].anchorMin = originalCurrentPanelMin + offset;
+            PanelRects[CurrentPanel].anchorMax = originalCurrentPanelMax + offset;
+            PanelRects[NextPanel].anchorMin = originalNextPanelMin + offset;
+            PanelRects[NextPanel].anchorMax = originalNextPanelMax + offset;
         }, onComplete: () => {
             // Unload old prefab
             Destroy(previousPrefab);
 
-            // Rename every panel for their new proper use
-            GameObject tmpPrevious = Previous;
-            Previous = Current;
-            Current = Next;
-            Next = tmpPrevious;
-            Previous.name = "Previous";
-            Current.name = "Current";
-            Next.name = "Next";
+            // Swap games objects to their proper purpose
+            GameObject savedPreviousPanel = PreviousPanel;
+            PreviousPanel = CurrentPanel;
+            CurrentPanel = NextPanel;
+            NextPanel = savedPreviousPanel;
+
+            // Update names to reflect their purpose
+            PreviousPanel.name = "Previous";
+            CurrentPanel.name = "Current";
+            NextPanel.name = "Next";
         });
     }
 
