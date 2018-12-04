@@ -36,42 +36,30 @@ public class GameScreenManager : MonoBehaviour {
     Vector2 NextPanelDefaultPos => CurrentPanelDefaultPos + Vector2.right;
 
     Dictionary<GameObject, RectTransform> m_PanelRects;
+    Dictionary<ScreenType, Transform> m_ScreenPrefabs;
 
     Transform m_CurrentlyLoadedPrefab;
-
-    public Transform GetScreenPrefab(ScreenType screen)
-    {
-        switch (screen)
-        {
-            case ScreenType.Home:
-                return homeScreenPrefab;
-            case ScreenType.Game:
-                return gameScreenPrefab;
-            case ScreenType.End:
-                return endScreenPrefab;
-            default:
-                Debug.LogError($"Unhandled screentype {screen}");
-                return null;
-        }
-    }
 
     private void Awake()
     {
         Assert.IsNull(Instance, "There can only be one GameScreenManager!");
-
         Instance = this;
 
         List<GameObject> panelsObjects = new List<GameObject> { previousPanel, currentPanel, nextPanel };
 
-        Assert.IsFalse(panelsObjects.Any(o => o == null), $"One of the Panels wasn't properly assigned");
+        Assert.IsFalse(panelsObjects.Any(o => o == null), "One of the Panels wasn't properly assigned");
 
         m_PanelRects = panelsObjects.ToDictionary(o => o, o => o.GetComponent<RectTransform>());
 
-        foreach (ScreenType screen in Enum.GetValues(typeof(ScreenType)))
+        m_ScreenPrefabs = new Dictionary<ScreenType, Transform>()
         {
-            Transform prefab = GetScreenPrefab(screen);
-            Assert.IsNotNull(prefab, $"Please specify a {screen} screen prefab");
-        }
+            { ScreenType.Home, homeScreenPrefab },
+            { ScreenType.Game, gameScreenPrefab },
+            { ScreenType.End, endScreenPrefab },
+        };
+
+        Assert.IsTrue(Enum.GetValues(typeof(ScreenType)).Length == m_ScreenPrefabs.Count);
+        Assert.IsFalse(m_ScreenPrefabs.Values.Any(t => t == null), "One of the screen prefabs wasn't set properly");
 
         m_CurrentlyLoadedPrefab = LoadScreen(firstScreenToLoad, currentPanel);
     }
@@ -118,9 +106,7 @@ public class GameScreenManager : MonoBehaviour {
 
     private Transform LoadScreen(ScreenType screen, GameObject parent)
     {
-        Transform prefab = GetScreenPrefab(screen);
-        Assert.IsNotNull(prefab, $"Prefab not specified for {screen}");
-        return Instantiate(prefab, parent.transform);
+        return Instantiate(m_ScreenPrefabs[screen], parent.transform);
     }
 
     private void Log(string message)
