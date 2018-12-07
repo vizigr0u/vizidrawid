@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 114731482025233796}
   - component: {fileID: 114201898661355140}
   m_Layer: 5
-  m_Name: SF Title
+  m_Name: DrawingBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d79f53e7282dab4584355d9f2e58dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brushSize: 1
+  brushSize: 20
 --- !u!114 &114735931948182296
 MonoBehaviour:
   m_ObjectHideFlags: 1
