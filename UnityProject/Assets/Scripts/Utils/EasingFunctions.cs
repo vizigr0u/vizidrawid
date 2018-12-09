@@ -54,19 +54,22 @@ public class Easing
                 };
 
             case Style.InQuart:
-                return (t) => {
+                return (t) =>
+                {
                     t *= t;
                     return t * t;
                 };
 
             case Style.OutQuart:
-                return (t) => {
+                return (t) =>
+                {
                     t = (--t) * t;
                     return 1f - t * t;
                 };
 
             case Style.InOutQuart:
-                return (t) => {
+                return (t) =>
+                {
                     if (t < 0.5)
                     {
                         t *= t;
@@ -80,19 +83,22 @@ public class Easing
                 };
 
             case Style.InQuint:
-                return (t) => {
+                return (t) =>
+                {
                     float t2 = t * t;
                     return t * t2 * t2;
                 };
 
             case Style.OutQuint:
-                return (t) => {
+                return (t) =>
+                {
                     float t2 = (--t) * t;
                     return 1f + t * t2 * t2;
                 };
 
             case Style.InOutQuint:
-                return (t) => {
+                return (t) =>
+                {
                     float t2;
                     if (t < 0.5)
                     {
@@ -107,17 +113,20 @@ public class Easing
                 };
 
             case Style.InExpo:
-                return (t) => {
+                return (t) =>
+                {
                     return (Mathf.Pow(2, 8f * t) - 1f) / 255;
                 };
 
             case Style.OutExpo:
-                return (t) => {
+                return (t) =>
+                {
                     return 1f - Mathf.Pow(2, -8f * t);
                 };
 
             case Style.InOutExpo:
-                return (t) => {
+                return (t) =>
+                {
                     if (t < 0.5f)
                     {
                         return (Mathf.Pow(2, 16f * t) - 1f) / 510f;
@@ -135,7 +144,8 @@ public class Easing
                 return (t) => Mathf.Sqrt(t);
 
             case Style.InOutCirc:
-                return (t) => {
+                return (t) =>
+                {
                     if (t < 0.5f)
                     {
                         return (1f - Mathf.Sqrt(1f - 2f * t)) * 0.5f;
@@ -153,7 +163,8 @@ public class Easing
                 return (t) => 1f + (--t) * t * (2.70158f * t + 1.70158f);
 
             case Style.InOutBack:
-                return (t) => {
+                return (t) =>
+                {
                     if (t < 0.5)
                     {
                         return t * t * (7f * t - 2.5f) * 2f;
@@ -165,19 +176,22 @@ public class Easing
                 };
 
             case Style.InElastic:
-                return (t) => {
+                return (t) =>
+                {
                     float t2 = t * t;
                     return t2 * t2 * Mathf.Sin(t * Mathf.PI * 4.5f);
                 };
 
             case Style.OutElastic:
-                return (t) => {
+                return (t) =>
+                {
                     float t2 = (t - 1f) * (t - 1f);
                     return 1f - t2 * t2 * Mathf.Cos(t * Mathf.PI * 4.5f);
                 };
 
             case Style.InOutElastic:
-                return (t) => {
+                return (t) =>
+                {
                     float t2;
                     if (t < 0.45f)
                     {
@@ -196,12 +210,14 @@ public class Easing
                 };
 
             case Style.InBounce:
-                return (t) => {
+                return (t) =>
+                {
                     return Mathf.Pow(2, 6 * (t - 1f)) * Mathf.Abs(Mathf.Sin(t * Mathf.PI * 3.5f));
                 };
 
             case Style.OutBounce:
-                return (t) => {
+                return (t) =>
+                {
                     return 1f - Mathf.Pow(2, -6 * t) * Mathf.Abs(Mathf.Cos(t * Mathf.PI * 3.5f));
                 };
 
