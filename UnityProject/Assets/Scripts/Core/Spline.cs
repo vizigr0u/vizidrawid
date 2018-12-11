@@ -22,7 +22,7 @@ class Spline
             new Vector2(0, 2),
             new Vector2(-1, 3),
             new Vector2(-2, 3),
-            new Vector2(-2, 3),
+            new Vector2(-2, 4),
             new Vector2(-4, 3),
     };
 
