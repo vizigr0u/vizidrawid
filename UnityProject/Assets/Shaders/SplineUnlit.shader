@@ -5,6 +5,7 @@ Shader "Custom/Spline Unlit"
         _Color ("Spline color", Color) = (1, 1, 0, 1)
         _Depth("Spline Z Value", Float) = 0.0
         _NumControlPoints("Number of control points", Float) = 0.0
+        [Toggle]_ShowDebug("Show Debug", Float) = 0
     }
 
     SubShader
@@ -32,6 +33,7 @@ Shader "Custom/Spline Unlit"
             float4      _ControlPoints[1000];
             float       _Width;
             float       _Depth;
+            float       _ShowDebug;
             float       _NumControlPoints;
             
             #include "UnityCG.cginc"
@@ -56,10 +58,10 @@ Shader "Custom/Spline Unlit"
                 float t = b - index;
                 float t2 = t * t;
 
-                float2 cp0 = _ControlPoints[index].xy;
-                float2 cp1 = _ControlPoints[index +1].xy;
-                float2 cp2 = _ControlPoints[index +2].xy;
-                float2 cp3 = _ControlPoints[index +3].xy;
+                float2 cp0 = _ControlPoints[index -1].xy;
+                float2 cp1 = _ControlPoints[index +0].xy;
+                float2 cp2 = _ControlPoints[index +1].xy;
+                float2 cp3 = _ControlPoints[index +2].xy;
 
                 float2 base0 = -cp0 + cp3 + (cp1 - cp2) * 3;
                 float2 base1 = 2*cp0 - 5*cp1 + 4*cp2 - cp3;
@@ -79,10 +81,17 @@ Shader "Custom/Spline Unlit"
 
             float4 frag (v2f i) : COLOR
             {
-                if (1 - i.t > .95)
-                    return float4(1, 0, 1, 1);
+                if (_ShowDebug > 0)
+                {
+                    if (1 - i.t > .95)
+                        return float4(1, 0, 1, 1);
+                    else
+                        return lerp(_Color, float4(1, 1, 1, 1), i.t);
+                }
                 else
-                    return lerp(_Color, float4(1, 1, 1, 1), i.t);
+                {
+                    return _Color;
+ }
             }
             ENDCG
         }
